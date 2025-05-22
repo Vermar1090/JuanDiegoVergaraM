@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Pulse - Proyecto ETL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1100px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            padding: 50px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: #1e3c72;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .slide h1 {
+            font-size: 2.8em;
+            color: #1e3c72;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h2 {
+            font-size: 2.2em;
+            color: #1e3c72;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #2a5298;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 1.6em;
+            color: #34495e;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .university-info {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .university-info h1 {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+        }
+
+        .university-info p {
+            font-size: 1.1em;
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .project-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            margin: 20px 0;
+        }
+
+        .project-header h2 {
+            border: none;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .student-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .content-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .problem-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .advantages-box {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .model-box {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .powerbi-box {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .requirements-box {
+            background: linear-gradient(135deg, #a8caba 0%, #5d4e75 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .conclusions-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .content-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .content-list li {
+            margin: 12px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 8px;
+            font-size: 1.1em;
+            position: relative;
+            padding-left: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .content-list li:hover {
+            transform: translateX(5px);
+        }
+
+        .content-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1e3c72;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .problem-list li::before {
+            content: '⚠';
+            background: #e74c3c;
+        }
+
+        .advantages-list li::before {
+            content: '💡';
+            background: #27ae60;
+        }
+
+        .model-list li::before {
+            content: '🧱';
+            background: #8e44ad;
+        }
+
+        .powerbi-list li::before {
+            content: '📊';
+            background: #3498db;
+        }
+
+        .req-list li::before {
+            content: '✅';
+            background: #2ecc71;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .icon-large {
+            font-size: 4em;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .sub-list {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .sub-list li {
+            font-size: 1em;
+            margin: 8px 0;
+        }
+
+        .sub-list li::before {
+            content: '→';
+            background: #95a5a6;
+        }
+
+        .thank-you {
+            text-align: center;
+            font-size: 1.4em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 25px;
+            }
+            
+            .slide h1 {
+                font-size: 2em;
+            }
+            
+            .slide h2 {
+                font-size: 1.6em;
+            }
+            
+            .content-list li {
+                font-size: 1em;
+                padding: 12px;
+                padding-left: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Portada -->
+        <div class="slide active">
+            <div class="slide-number">1/8</div>
+            <div class="university-info">
+                <h1>UNIVERSIDAD NACIONAL ABIERTA Y A DISTANCIA</h1>
+                <p><strong>UNAD</strong></p>
+                <p>Ingeniería en sistemas</p>
+                <p>Curso: Tecnologías ETL</p>
+            </div>
+            
+            <div class="project-header">
+                <div class="icon-large">🏪</div>
+                <h2>Proyecto Urban Pulse</h2>
+                <h3>Inteligencia de Negocios aplicada a Gestión de Inventarios</h3>
+            </div>
+            
+            <div class="student-info">
+                <p><strong>👤 Estudiante:</strong> Juan Diego Vergara Martinez</p>
+                <p><strong>📅 Fecha:</strong> Mayo de 2025</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Presentación Personal -->
+        <div class="slide">
+            <div class="slide-number">2/8</div>
+            <h2>🧍 Presentación Personal</h2>
+            <div class="content-box">
+                <div class="icon-large">👋</div>
+                <h3>¡Hola!</h3>
+                <p style="font-size: 1.3em; text-align: center; line-height: 1.6;">
+                    Mi nombre es <strong>Juan Diego Vergara Martinez</strong>, estudiante del programa 
+                    <strong>Ingeniería en sistemas</strong> en la UNAD.
+                </p>
+                <p style="font-size: 1.2em; text-align: center; margin-top: 20px; line-height: 1.6;">
+                    A continuación, presentaré el desarrollo del proyecto de <strong>Inteligencia de Negocios</strong> 
+                    aplicado a la cadena de tiendas de ropa <strong>Urban Pulse</strong>, en el marco del curso 
+                    <strong>Tecnologías ETL</strong>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Problema Identificado -->
+        <div class="slide">
+            <div class="slide-number">3/8</div>
+            <h2>❗ Problema Identificado</h2>
+            <div class="problem-box">
+                <h3>Gestión de Inventarios en Urban Pulse</h3>
+                <ul class="content-list problem-list">
+                    <li>Manejo de datos desde múltiples fuentes heterogéneas</li>
+                    <li>Sistema web con información de productos y tiendas</li>
+                    <li>Base de datos Access con información de proveedores</li>
+                    <li>Integración manual propensa a errores humanos</li>
+                    <li>Dificultades crecientes con el aumento de transacciones</li>
+                </ul>
+                <p style="font-size: 1.2em; text-align: center; margin-top: 20px; font-weight: bold;">
+                    💡 Solución: Implementar una estrategia de Inteligencia de Negocios
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Ventajas de BI -->
+        <div class="slide">
+            <div class="slide-number">4/8</div>
+            <h2>💡 Ventajas de Implementar BI</h2>
+            <div class="advantages-box">
+                <ul class="content-list advantages-list">
+                    <li>Automatizar la integración de datos desde diferentes fuentes</li>
+                    <li>Eliminar errores humanos causados por el manejo manual</li>
+                    <li>Obtener reportes de inventario actualizados, precisos y accesibles en tiempo real</li>
+                    <li>Analizar tendencias y comportamientos en el inventario para tomar mejores decisiones de negocio</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Modelo del Data Warehouse -->
+        <div class="slide">
+            <div class="slide-number">5/8</div>
+            <h2>🧱 Modelo e Implementación del Data Warehouse</h2>
+            <div class="model-box">
+                <h3>Arquitectura del Data Warehouse</h3>
+                <ul class="content-list model-list">
+                    <li>Data Warehouse que consolida datos de productos, tiendas y proveedores</li>
+                    <li>Procesos ETL automatizados para extracción de fuentes de datos</li>
+                    <li>Herramientas utilizadas: Talend/OpenRefine/Power Query</li>
+                    <li>Modelo estructurado en esquema estrella:
+                        <ul class="sub-list">
+                            <li>Tabla de hechos: movimientos de inventario</li>
+                            <li>Dimensiones: productos, tiendas, fechas y proveedores</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p style="font-size: 1.1em; text-align: center; margin-top: 15px; font-weight: bold;">
+                    Este modelo facilita consultas eficientes y análisis estructurados
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Power BI -->
+        <div class="slide">
+            <div class="slide-number">6/8</div>
+            <h2>📊 Herramientas de Visualización (Power BI)</h2>
+            <div class="powerbi-box">
+                <h3>Dashboard de Monitoreo</h3>
+                <ul class="content-list powerbi-list">
+                    <li>Dashboard construido en Microsoft Power BI</li>
+                    <li>Monitoreo de entradas y salidas de inventario</li>
+                    <li>Visualización de existencia actual por producto, tienda o categoría</li>
+                    <li>Análisis del valor del inventario</li>
+                    <li>Filtros por ubicación, fechas o proveedor</li>
+                    <li>Actualización en tiempo real con conexión automática al Data Warehouse</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Requerimientos Implementados -->
+        <div class="slide">
+            <div class="slide-number">7/8</div>
+            <h2>✅ Requerimientos Implementados</h2>
+            <div class="requirements-box">
+                <h3>Logros del Proyecto</h3>
+                <ul class="content-list req-list">
+                    <li><strong>Requerimientos Funcionales:</strong>
+                        <ul class="sub-list">
+                            <li>Automatización del proceso ETL</li>
+                            <li>Consolidación de fuentes heterogéneas (Web + Access)</li>
+                            <li>Visualización de reportes con indicadores clave</li>
+                        </ul>
+                    </li>
+                    <li><strong>Requerimientos No Funcionales:</strong>
+                        <ul class="sub-list">
+                            <li>Fiabilidad de datos gracias al proceso de limpieza</li>
+                            <li>Tiempo de respuesta mejorado en consultas</li>
+                        </ul>
+                    </li>
+                    <li><strong>Requerimientos de Negocio:</strong>
+                        <ul class="sub-list">
+                            <li>Acceso rápido y centralizado a información crítica</li>
+                            <li>Soporte a la toma de decisiones con datos históricos</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Conclusiones -->
+        <div class="slide">
+            <div class="slide-number">8/8</div>
+            <h2>🎯 Conclusiones</h2>
+            <div class="conclusions-box">
+                <ul class="content-list">
+                    <li>La Inteligencia de Negocios optimiza significativamente la gestión del inventario en Urban Pulse</li>
+                    <li>La automatización mejora la precisión, velocidad y disponibilidad de la información</li>
+                    <li>Power BI permite construir reportes dinámicos que apoyan la toma de decisiones en tiempo real</li>
+                    <li>Un diseño adecuado de Data Warehouse y procesos ETL efectivos son la base de cualquier estrategia de BI</li>
+                </ul>
+            </div>
+            
+            <div class="thank-you">
+                <div class="icon-large">🙏</div>
+                <p><strong>Gracias por su atención</strong></p>
+                <p>Espero que esta solución planteada para Urban Pulse contribuya a mejorar la gestión empresarial mediante herramientas modernas de inteligencia de negocios.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()" id="prevBtn">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()" id="nextBtn">Siguiente ▶</button>
+    </div>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">8</span>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            document.getElementById('currentSlide').textContent = index + 1;
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
